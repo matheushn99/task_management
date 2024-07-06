@@ -10,9 +10,9 @@ app = FastAPI(
     docs_url=None,
     redoc_url=None,
     contact={
-        "name": "Luan Fernandes",
-        "email": "luan.santos26@fatec.sp.gov.br",
-        "url": "https://luanfernandes.dev"
+        "name": "Matheus Henrique",
+        "email": "matheus.neres@fatec.sp.gov.br",
+        "url": "https://github.com/matheushn99"
     },
     license_info={
         "name": "MIT",
@@ -24,7 +24,7 @@ app = FastAPI(
             "description": "Development server"
         },
         {
-            "url": "http://user.luanfernandes.dev",
+            "url": "https://github.com/matheushn99",
             "description": "Production server"
         }
     ]
