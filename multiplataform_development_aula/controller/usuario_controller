@@ -1,0 +1,43 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from multiplataform_development_aula.config.database import get_db
+from multiplataform_development_aula.domain.dto.dtos import UsuarioCreateDTO
+from multiplataform_development_aula.repository.usuario_repository import UsuarioRepository
+
+user_router = APIRouter(prefix='/users', tags=['Users'])
+
+def get_user_repo(session: Session = Depends(get_db)):
+    return UsuarioRepository(session=session)
+
+
+
+
+@user_router.post('/', status_code=201, description='cria um novo usuário', response_model=UsuarioDTO)
+async def create(request: UsuarioDTO, user_repo: UsuarioRepository = Depends(get_user_repo)):
+    usuario_service = usuario_service(user_repo)
+    return usuario_service.create(request)
+
+
+@user_router.get('/{user_id}', status_code=200, description='Busca usuario por ID', response_model=UsuarioDTO)
+async def find_by_id(user_id: int, user_repo: UsuarioRepository = Depends(get_user_repo)):
+    usuario_service = usuario_service(user_repo)
+    return usuario_service.read(user_id=user_id)
+
+
+@user_router.get('/', status_code=200, description='Busca todos os usuarios', response_model=UsuarioDTO)
+async def find_all(user_repo: UsuarioRepository = Depends(get_user_repo)):
+    usuario_service = usuario_service(user_repo)
+    return usuario_service.find_all()
+
+
+@user_router.put('/{user_id}', status_code=200, description='atualizar um usuario', response_model=UsuarioDTO)
+async def find_all(user_id: int, user_data: UsuarioUpdateDTO, user_repo: UsuarioRepository = Depends(get_user_repo)):
+    usuario_service = usuario_service(user_repo)
+    return usuario_service.update(user_id, user_data)
+
+
+@user_router.delete('/{user_id}', status_code=204, description='deletar usuario por id', response_model=UsuarioDTO)
+async def find_by_id(user_id: int, user_repo: UsuarioRepository = Depends(get_user_repo)):
+    usuario_service = usuario_service(user_repo)
+    return usuario_service.delete(user_id=user_id)

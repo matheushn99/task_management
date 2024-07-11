@@ -1,5 +1,6 @@
-from pydantic import TypeAdapter
+from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
+from pydantic import TypeAdapter
 
 from multiplataform_development_aula.domain.dto.dtos import UsuarioCreateDTO, UsuarioDTO, UsuarioUpdateDTO
 from multiplataform_development_aula.domain.model.models import Usuario
@@ -18,6 +19,7 @@ class UsuarioService:
             return TypeAdapter(UsuarioDTO).validate_python(created)
         except IntegrityError as e:
             print(f'Erro ao criar o usuário: {user_data.model_dump()}. Erro: {str(e)}')
+            raise HTTPException(status_code=409, detail=f'Usuario ja existe na base: {e.args[0]}')
 
     def read(self, user_id: int) -> UsuarioDTO:
         return TypeAdapter(UsuarioDTO).validate_python(self._read(user_id))
@@ -25,7 +27,7 @@ class UsuarioService:
     def _read(self, user_id: int) -> Usuario:
         user = self.usuario_repository.read(user_id)
         if user is None:
-            raise Exception(f'Usuário {user_id} não encontrado.')
+            raise Exception(status_code=404, detail=f'Usuário {user_id} não encontrado.')
         return user
 
     def find_all(self) -> list[UsuarioDTO]:

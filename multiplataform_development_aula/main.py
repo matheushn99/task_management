@@ -1,6 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.openapi.docs import get_swagger_ui_html
+from fastapi.responses import JSONResponse
 from starlette.responses import RedirectResponse
+
+from multiplataform_development_aula.controller.usuario_controller import user_route
 
 app = FastAPI(
     title="API de Usuários",
@@ -29,6 +32,24 @@ app = FastAPI(
         }
     ]
 )
+
+
+app.include_router(user_route)
+
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={"message": "Um erro inesperado ocorreu no servidor"}
+    )
+
+@app.exception_handler(HTTPException)
+async def general_exception_handler(request, exc: Exception):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"message": exc.detail}
+    )
 
 
 @app.get('/', tags=['Redirect'], include_in_schema=False)
